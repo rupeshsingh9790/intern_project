@@ -9,6 +9,8 @@ import {
   Typography,
   TextField,
   Button,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -25,6 +27,19 @@ export default function EditProductPage() {
     price: "",
     image: "",
   });
+
+  const [snackbar, setSnackbar] = useState({
+  open: false,
+  message: "",
+  severity: "success",
+});
+
+function handleSnackbarClose() {
+  setSnackbar({
+    ...snackbar,
+    open: false,
+  });
+}
 
   async function getProduct() {
     const res = await fetch(`/api/products/${id}`);
@@ -46,6 +61,69 @@ export default function EditProductPage() {
   }
 }
 async function handleUpdate() {
+
+ // Product Name
+if (!formData.name.trim()) {
+  setSnackbar({
+  open: true,
+  message: "Product Name is required",
+  severity: "warning",
+});
+return;
+}
+
+// Description
+if (!formData.description.trim()) {
+  setSnackbar({
+  open: true,
+  message: "Description is required",
+  severity: "warning",
+});
+return;
+}
+
+// Price Empty
+if (!formData.price.toString().trim()) {
+  setSnackbar({
+  open: true,
+  message: "Price is required",
+  severity: "warning",
+});
+return;
+}
+
+// Price Number
+if (isNaN(Number(formData.price))) {
+  setSnackbar({
+  open: true,
+  message: "Price must be a valid number",
+  severity: "warning",
+});
+return;
+}
+
+// Price Greater than 0
+if (Number(formData.price) <= 0) {
+  setSnackbar({
+  open: true,
+  message: "Price must be greater than 0",
+  severity: "warning",
+});
+return;
+}
+
+// Image Required (only if no old image and no new image)
+if (!selectedFile && !formData.image) {
+  setSnackbar({
+  open: true,
+  message: "Please select an image",
+  severity: "warning",
+});
+return;
+}
+
+
+
   try {
     let imageUrl = formData.image;
 
@@ -210,6 +288,26 @@ async function handleUpdate() {
         </Button>
       </Box>
     </Paper>
+
+    <Snackbar
+  open={snackbar.open}
+  autoHideDuration={3000}
+  onClose={handleSnackbarClose}
+  anchorOrigin={{
+    vertical: "top",
+    horizontal: "right",
+  }}
+>
+  <Alert
+    onClose={handleSnackbarClose}
+    severity={snackbar.severity as any}
+    variant="filled"
+    sx={{ width: "100%" }}
+  >
+    {snackbar.message}
+  </Alert>
+</Snackbar>
+
   </Box>
 );
 }

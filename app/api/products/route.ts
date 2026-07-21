@@ -61,27 +61,46 @@ export async function GET(req: Request) {
     
     const { searchParams } = new URL(req.url);
 
-    const page = Number(searchParams.get("page")) || 1;
-    const limit = 5;
-    const products = await prisma.product.findMany({
-  include: {
-    user: true,
-  },
+   const pageParam = searchParams.get("page");
+
+    let products;
+
+if (pageParam) {
+  const page = Number(pageParam);
+  const limit = 5;
+
+  products = await prisma.product.findMany({
+    include: {
+      user: true,
+    },
+    orderBy: {
+      id: "desc",
+    },
+    skip: (page - 1) * limit,
+    take: limit,
+  });
+
+  const totalProducts = await prisma.product.count();
+
+  return NextResponse.json({
+    products,
+    totalProducts,
+    page,
+    totalPages: Math.ceil(totalProducts / limit),
+    currentPage: page,
+  });
+}
+
+// Customer Listing
+products = await prisma.product.findMany({
   orderBy: {
     id: "desc",
   },
-  skip: (page - 1) * limit,
-  take: limit,
 });
-const totalProducts = await prisma.product.count();
 
-    return NextResponse.json({
-      products,
-      totalProducts,
-      page,
-      totalPages: Math.ceil(totalProducts / limit),
-      currentPage: page,
-    });
+return NextResponse.json({
+  products,
+});
 
     } catch (error) {
     // 👈 REPLACE YOUR OLD CATCH BLOCK WITH THIS

@@ -10,20 +10,25 @@ export async function PATCH(
     const { id } = await params;
 
     // Find user
-    const user = await prisma.user.findUnique({
-      where: {
-        id: Number(id),
-      },
-    });
-if (user?.role === "ADMIN") {
+  const user = await prisma.user.findUnique({
+  where: {
+    id: Number(id),
+  },
+});
+
+if (!user) {
   return NextResponse.json(
-    {
-      message: "Admin cannot be deactivated",
-    },
-    {
-      status: 400,
-    }
+    { message: "User not found" },
+    { status: 404 }
   );
+}
+
+if (user.role === "ADMIN") {
+  return NextResponse.json(
+    { message: "Admin cannot be deactivated" },
+    { status: 400 }
+  );
+
 }
     if (!user) {
       return NextResponse.json(

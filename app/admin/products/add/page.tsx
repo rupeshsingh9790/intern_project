@@ -10,6 +10,8 @@ import {
   Typography,
   TextField,
   Button,
+  Snackbar,
+  Alert,
 } from "@mui/material";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -19,11 +21,19 @@ export default function AddProductPage() {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  const [loading, setLoading] = useState(false);
+
   const [formData, setFormData] = useState({
     name: "",
     description: "",
     price: "",
     image: "",
+  });
+
+  const [snackbar, setSnackbar] = useState({
+    open: false,
+    message: "",
+    severity: "success",
   });
 
   function handleFileChange(
@@ -34,7 +44,68 @@ export default function AddProductPage() {
     }
   }
 
+  function handleSnackbarClose() {
+  setSnackbar({
+    ...snackbar,
+    open: false,
+  });
+}
+
   async function handleSubmit() {
+      console.log("handleSubmit called");
+      console.log(formData);
+ 
+  // Product Name
+  if (!formData.name.trim()) {
+    setSnackbar({
+  open: true,
+  message: "Product Name is required.",
+  severity: "warning",
+});
+return;
+  }
+
+  // Description
+  if (!formData.description.trim()) {
+    setSnackbar({
+      open: true,
+      message: "Description is required.",
+      severity: "warning",
+    });
+    return;
+  }
+
+  // Price Required
+  if (!formData.price.trim()) {
+    setSnackbar({
+      open: true,
+      message: "Price is required.",
+      severity: "warning",
+    });
+    return;
+  }
+
+  // Price Validation
+  if (Number(formData.price) <= 0) {
+    setSnackbar({
+      open: true,
+      message: "Price must be greater than 0.",
+      severity: "warning",
+    });
+    return;
+  }
+
+  // Image Required
+  if (!selectedFile) {
+    setSnackbar({
+      open: true,
+      message: "Please select an image.",
+      severity: "warning",
+    });
+    return;
+  }
+
+  setLoading(true);
     try {
       let imageUrl = "";
 
@@ -200,6 +271,26 @@ export default function AddProductPage() {
           </Button>
         </Box>
       </Paper>
+
+      <Snackbar
+  open={snackbar.open}
+  autoHideDuration={3000}
+  onClose={handleSnackbarClose}
+  anchorOrigin={{
+    vertical: "top",
+    horizontal: "right",
+  }}
+>
+  <Alert
+    onClose={handleSnackbarClose}
+    severity={snackbar.severity as any}
+    variant="filled"
+    sx={{ width: "100%" }}
+  >
+    {snackbar.message}
+  </Alert>
+</Snackbar>
+
     </Box>
   );
 }

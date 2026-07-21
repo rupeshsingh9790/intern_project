@@ -61,7 +61,7 @@ export default function ProductDetails() {
       }}
     >
       {/* Image */}
-      <Box flex={1}>
+      <Box sx={{ flex: 1 }}>
         <img
           src={product.image}
           alt={product.name}
@@ -75,7 +75,7 @@ export default function ProductDetails() {
       </Box>
 
       {/* Details */}
-      <Box flex={1}>
+      <Box sx={{ flex: 1 }}>
         <Typography variant="h4" fontWeight={700}>
           {product.name}
         </Typography>

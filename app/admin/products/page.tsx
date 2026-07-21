@@ -78,6 +78,45 @@ const [snackbar, setSnackbar] = useState({
 }
 
 async function handleSubmit() {
+  console.log("handleSubmit called");
+  // Product Name Validation
+if (!formData.name.trim()) {
+  setSnackbar({
+    open: true,
+    message: "Product name is required.",
+    severity: "warning",
+  });
+  return;
+}
+// Description
+if (!formData.description.trim()) {
+  setSnackbar({
+    open: true,
+    message: "Please enter a description.",
+    severity: "warning",
+  });
+  return;
+}
+
+// Price
+if (!formData.price || Number(formData.price) <= 0) {
+  setSnackbar({
+    open: true,
+    message: "Please enter a valid price.",
+    severity: "warning",
+  });
+  return;
+}
+
+// Image
+if (!selectedFile) {
+  setSnackbar({
+    open: true,
+    message: "Please choose a product image.",
+    severity: "warning",
+  });
+  return;
+}
   try {
     let imageUrl = "";
 
@@ -558,108 +597,7 @@ function handleSnackbarClose() {
   </DialogActions>
 </Dialog>
 
-<Dialog open={editOpen}>
-  <DialogTitle
-    sx={{
-      fontWeight: 700,
-      fontSize: 25,
-      pb: 1,
-    }}
-  >
-    Add Product
-  </DialogTitle>
 
-  <DialogContent>
-
-    <Box
-  sx={{
-    display: "flex",
-    flexDirection: "column",
-    gap: 3,
-    mt: 1,
-  }}
->
-
-      <TextField
-        label="Product Name"
-        fullWidth
-        name="name"
-        value={formData.name}
-        onChange={handleChange}
-      />
-
-      <TextField
-    label="Description"
-    name="description"
-    value={formData.description}
-    onChange={handleChange}
-    multiline
-    rows={3}
-    fullWidth
-/>
-
-      <TextField
-    label="Price"
-    name="price"
-    type="number"
-    value={formData.price}
-    onChange={handleChange}
-    fullWidth
-/>
-<Button
-  variant="outlined"
-  component="label"
-  sx={{
-    textTransform: "none",
-    justifyContent: "flex-start",
-  }}
->
-  Choose Image
-
-  <input
-    hidden
-    type="file"
-    accept="image/*"
-    onChange={handleFileChange}
-  />
-</Button>
-
-{selectedFile && (
-  <Typography
-    variant="body2"
-    color="text.secondary"
-  >
-    Selected: {selectedFile.name}
-  </Typography>
-)}
-    </Box>
-
-  </DialogContent>
-
-  <DialogActions
-    sx={{
-      px: 3,
-      pb: 3,
-    }}
-  >
-
-    <Button
-      
-      color="inherit"
-    >
-      Cancel
-    </Button>
-
-    <Button
-      variant="contained"
-      onClick={handleSubmit}
-    >
-      Save Product
-    </Button>
-
-  </DialogActions>
-
-</Dialog>
 
 <Dialog open={editOpen}>
 
