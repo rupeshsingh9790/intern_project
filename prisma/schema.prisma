@@ -5,6 +5,13 @@ generator client {
 datasource db {
   provider = "mysql"
 }
+enum OrderStatus {
+  PENDING
+  CONFIRMED
+  SHIPPED
+  DELIVERED
+  CANCELLED
+} 
 model User {
   id        Int      @id @default(autoincrement())
   name      String
@@ -15,6 +22,7 @@ model User {
   isActive  Boolean  @default(true)
 
   products Product[]
+  orders Order[]
 }
 model Product {
   id       Int @id @default(autoincrement())
@@ -23,8 +31,33 @@ model Product {
   price   Float
   image   String
   userId Int
+orders Order[]
 
   user User @relation(fields: [userId], references: [id])
+}
+model Order {
+  id            Int      @id @default(autoincrement())
+
+  fullName      String
+  mobile        String
+  email         String
+
+  address       String
+  city          String
+  state         String
+  pincode       String
+  landmark      String?
+
+  paymentMethod String
+  status        OrderStatus @default(PENDING)
+
+  createdAt     DateTime @default(now())
+
+  productId      Int
+  product        Product  @relation(fields: [productId], references: [id])
+
+  userId         Int
+  user           User     @relation(fields: [userId], references: [id])
 }
 
 enum Role {

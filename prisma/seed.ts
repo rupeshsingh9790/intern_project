@@ -16,6 +16,7 @@ const images = [
 async function main() {
   console.log("Deleting old data...");
 
+  await prisma.order.deleteMany();
   await prisma.product.deleteMany();
   await prisma.user.deleteMany();
 

@@ -1,5 +1,8 @@
+"use client";
+
+import { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
 import Navbar from "@/components/customer/Navbar";
-import Link from "next/link";
 import {
   CreditCard,
   Smartphone,
@@ -8,6 +11,42 @@ import {
 } from "lucide-react";
 
 export default function PaymentPage() {
+  const router = useRouter();
+ const [checkoutData, setCheckoutData] = useState<any>(null);
+
+useEffect(() => {
+  const data = localStorage.getItem("checkoutData");
+
+  if (data) {
+    setCheckoutData(JSON.parse(data));
+  }
+}, []);
+
+const handlePlaceOrder = async () => {
+  if (!checkoutData) return;
+
+  const response = await fetch("/api/orders", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify({
+      ...checkoutData,
+      paymentMethod: "COD",
+      productId: 1, // Temporary
+      userId: 1, // Temporary
+    }),
+  });
+
+  const data = await response.json();
+
+  if (response.ok) {
+    alert("Order Placed Successfully!");
+    router.push("/success");
+  } else {
+    alert(data.message);
+  }
+};
   return (
     <>
       <Navbar showSearch={false} showCart={false} />
@@ -143,11 +182,13 @@ export default function PaymentPage() {
 
 </div>
 
-<Link href="/success">
-<button className="mt-8 w-full rounded-xl bg-amber-500 py-3 text-lg font-semibold text-white transition hover:bg-amber-600">
+
+<button
+  onClick={handlePlaceOrder}
+  className="mt-8 w-full rounded-xl bg-amber-500 py-3 text-lg font-semibold text-white transition hover:bg-amber-600"
+>
   Place Order
 </button>
-</Link>
 </div>
 
         </div>
