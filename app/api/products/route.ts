@@ -73,6 +73,9 @@ if (pageParam) {
     include: {
       user: true,
     },
+    where:{
+      isDeleted: false,
+    },
     orderBy: {
       id: "desc",
     },
@@ -92,10 +95,19 @@ if (pageParam) {
 }
 
 // Customer Listing
+// Customer Listing
 products = await prisma.product.findMany({
+  where: {
+    isActive: true,
+    isDeleted: false,
+  },
   orderBy: {
     id: "desc",
   },
+});
+
+return NextResponse.json({
+  products,
 });
 
 return NextResponse.json({

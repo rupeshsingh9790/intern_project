@@ -93,16 +93,16 @@ const handleProceed = () => {
 
       <div className="mx-auto max-w-3xl px-6 py-10">
 
-        <h1 className="text-4xl font-bold text-amber-500">
+        <h1 className="text-5xl font-bold text-amber-500">
           Delivery Address
         </h1>
 
         <p className="mt-2 text-slate-300">
           Please enter your delivery details.
         </p>
-        <div className="mt-10 rounded-2xl bg-neutral-200 p-8 shadow-amber-200/70 shadow-lg">
+        <div className="mt-10 rounded-2xl bg-neutral-200 p-8 ">
 
-         <div className="rounded-xl border p-5 opacity-90">
+         <div className="rounded-xl border p-5">
 
   <div className="grid gap-6 md:grid-cols-2 text-black">
 
@@ -113,7 +113,7 @@ const handleProceed = () => {
   placeholder="Enter your full name"
   value={formData.fullName}
   onChange={handleChange}
-    className="bg-neutral-100" />
+    className="mt-2 h-12 rounded-xl border-gray-300 bg-white focus:border-amber-500 focus:ring-amber-500" />
 
     {errors.fullName && (
   <p className="mt-1 text-sm text-red-500">
@@ -132,7 +132,7 @@ const handleProceed = () => {
   placeholder="Enter mobile number"
   value={formData.mobile}
   onChange={handleChange}
-  className="bg-neutral-100"
+  className="mt-2 h-12 rounded-xl border-gray-300 bg-white focus:border-amber-500 focus:ring-amber-500"
 />
 {errors.mobile && (
   <p className="mt-1 text-sm text-red-500">
@@ -149,7 +149,7 @@ const handleProceed = () => {
   placeholder="Enter your email"
   value={formData.email}
   onChange={handleChange}
-  className="bg-neutral-100"
+  className="mt-2 h-12 rounded-xl border-gray-300 bg-white focus:border-amber-500 focus:ring-amber-500"
 />
 {errors.email && (
   <p className="mt-1 text-sm text-red-500">
@@ -168,7 +168,7 @@ const handleProceed = () => {
   placeholder="Pincode"
   value={formData.pincode}
   onChange={handleChange}
-  className="bg-neutral-100"
+  className="mt-2 h-12 rounded-xl border-gray-300 bg-white focus:border-amber-500 focus:ring-amber-500"
 />
 {errors.pincode && (
   <p className="mt-1 text-sm text-red-500">
@@ -184,7 +184,7 @@ const handleProceed = () => {
   placeholder="House No., Street, Area"
   value={formData.address}
   onChange={handleChange}
-  className="bg-neutral-100"
+  className="mt-2 h-12 rounded-xl border-gray-300 bg-white focus:border-amber-500 focus:ring-amber-500"
 />
 {errors.address && (
   <p className="mt-1 text-sm text-red-500">
@@ -200,7 +200,7 @@ const handleProceed = () => {
   placeholder="City"
   value={formData.city}
   onChange={handleChange}
-  className="bg-neutral-100"
+  className="mt-2 h-12 rounded-xl border-gray-300 bg-white focus:border-amber-500 focus:ring-amber-500"
 />
 {errors.city && (
   <p className="mt-1 text-sm text-red-500">
@@ -216,7 +216,7 @@ const handleProceed = () => {
   placeholder="State"
   value={formData.state}
   onChange={handleChange}
-  className="bg-neutral-100"
+  className="mt-2 h-12 rounded-xl border-gray-300 bg-white focus:border-amber-500 focus:ring-amber-500"
 />
 {errors.state && (
   <p className="mt-1 text-sm text-red-500">
@@ -232,7 +232,7 @@ const handleProceed = () => {
   placeholder="Near School, Hospital..."
   value={formData.landmark}
   onChange={handleChange}
-  className="bg-neutral-100"
+  className="mt-2 h-12 rounded-xl border-gray-300 bg-white focus:border-amber-500 focus:ring-amber-500"
 />
 {errors.landmark && (
   <p className="mt-1 text-sm text-red-500">
@@ -248,7 +248,7 @@ const handleProceed = () => {
  <button
   type="button"
   onClick={handleProceed}
-  className="w-45 rounded-xl bg-amber-500 py-4 font-semibold text-white hover:bg-amber-600"
+  className="w-55 rounded-2xl bg-amber-500 py-4 text-lg font-semibold text-white shadow-lg transition-all duration-300 hover:bg-amber-600 hover:scale-[1]"
 >
   Proceed to Payment
 </button>

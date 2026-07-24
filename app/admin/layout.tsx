@@ -55,6 +55,13 @@ export default function AdminLayout({
           </Link>
 
           <Link
+  href="/admin/orders"
+  style={{ color: "white", textDecoration: "none" }}
+>
+  🛒 Orders
+</Link>
+
+          <Link
             href="/"
             style={{
               color: "#ff6b6b",
@@ -64,6 +71,8 @@ export default function AdminLayout({
           >
             🚪 Logout
           </Link>
+
+          
         </nav>
       </div>
 

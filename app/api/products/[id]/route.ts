@@ -60,21 +60,22 @@ export async function GET(
 }
 
 export async function DELETE(
-    req: Request,
-    { params }: { params: Promise<{ id: string }> }
+  req: Request,
+  { params }: { params: Promise<{ id: string }> }
 ) {
+  const { id } = await params;
 
-    const { id } = await params;
+  const product = await prisma.product.update({
+    where: {
+      id: Number(id),
+    },
+    data: {
+      isDeleted: true,
+    },
+  });
 
-    const product = await prisma.product.delete({
-        where: {
-            id: Number(id),
-        },
-    });
-
-    return NextResponse.json({
-        message: "Product Deleted Successfully",
-        product,
-    });
-
+  return NextResponse.json({
+    message: "Product Deleted Successfully",
+    product,
+  });
 }

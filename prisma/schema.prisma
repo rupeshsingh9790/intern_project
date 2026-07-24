@@ -16,13 +16,13 @@ model User {
   id        Int      @id @default(autoincrement())
   name      String
   email     String   @unique
-  mobile    String
   password  String
-  role      Role
-  isActive  Boolean  @default(true)
+  role      String   @default("USER")
 
-  products Product[]
-  orders Order[]
+  isDeleted Boolean  @default(false)
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 model Product {
   id       Int @id @default(autoincrement())
@@ -30,6 +30,10 @@ model Product {
   description    String 
   price   Float
   image   String
+
+  isActive  Boolean @default(true)
+isDeleted Boolean @default(false)
+
   userId Int
 orders Order[]
 

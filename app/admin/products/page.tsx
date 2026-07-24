@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useEffect, useState } from "react";
 import Image from "next/image";
+import { Switch } from "@/components/ui/switch";
 
 import {
   Box,
@@ -327,6 +328,51 @@ async function handleDelete() {
   }
 }
 
+const toggleProduct = async (id: number) => {
+  try {
+    const res = await fetch(`/api/products/toggle/${id}`, {
+      method: "PATCH",
+    });
+
+    const data = await res.json();
+
+    if (res.ok) {
+      setProducts((prev) =>
+        prev.map((product) =>
+          product.id === id
+            ? {
+                ...product,
+                isActive: data.isActive,
+              }
+            : product
+        )
+      );
+
+      setSnackbar({
+        open: true,
+        message: `Product ${
+          data.isActive ? "Activated" : "Deactivated"
+        } Successfully`,
+        severity: "success",
+      });
+    } else {
+      setSnackbar({
+        open: true,
+        message: data.message,
+        severity: "error",
+      });
+    }
+  } catch (error) {
+    console.error(error);
+
+    setSnackbar({
+      open: true,
+      message: "Something went wrong",
+      severity: "error",
+    });
+  }
+};
+
 
  function handleOpen(product: any) {
   setSelectedProduct(product);
@@ -448,16 +494,20 @@ function handleSnackbarClose() {
                 Price
               </TableCell>
 
-              <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                Created By
-              </TableCell>
+             <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+  Created By
+</TableCell>
 
-              <TableCell
-                align="center"
-                sx={{ color: "white", fontWeight: "bold" }}
-              >
-                Action
-              </TableCell>
+<TableCell sx={{ color: "white", fontWeight: "bold" }}>
+  Status
+</TableCell>
+
+<TableCell
+  align="center"
+  sx={{ color: "white", fontWeight: "bold" }}
+>
+  Action
+</TableCell>
             </TableRow>
           </TableHead>
 
@@ -494,9 +544,36 @@ function handleSnackbarClose() {
                   ₹ {product.price}
                 </TableCell>
 
-                <TableCell>{product.user.name}</TableCell>
+               <TableCell>{product.user.name}</TableCell>
 
-                <TableCell align="center">
+<TableCell align="center">
+  <Box
+    sx={{
+      display: "flex",
+      alignItems: "center",
+      justifyContent: "center",
+      gap: 1,
+    }}
+  >
+    <Switch
+  checked={product.isActive}
+  onCheckedChange={() => toggleProduct(product.id)}
+  className="data-[state=checked]:bg-green-600 data-[state=unchecked]:bg-gray-400"
+/>
+
+    <Typography
+      sx={{
+        color: product.isActive ? "green" : "red",
+        fontWeight: 600,
+        fontSize: 14,
+      }}
+    >
+      {product.isActive ? "Active" : "Inactive"}
+    </Typography>
+  </Box>
+</TableCell>
+
+<TableCell align="center">
                   <ButtonGroup
                     variant="outlined"
                     size="small"
