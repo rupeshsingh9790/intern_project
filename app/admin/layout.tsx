@@ -55,6 +55,13 @@ export default function AdminLayout({
           </Link>
 
           <Link
+  href="/admin/categories"
+  style={{ color: "white", textDecoration: "none" }}
+>
+  🗂️ Categories
+</Link>
+
+          <Link
   href="/admin/orders"
   style={{ color: "white", textDecoration: "none" }}
 >

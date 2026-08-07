@@ -1,3 +1,6 @@
+"use client";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
 import { Star } from "lucide-react";
 import Link from "next/link";
 
@@ -14,7 +17,38 @@ export default function ProductDetails({
 }: {
   product: Product;
 }) {
- return (
+
+  const router = useRouter();
+  const [loading, setLoading] = useState(false);
+
+  const handleAddToCart = async () => {
+    try {
+      setLoading(true);
+
+      const res = await fetch("/api/cart", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+  productId: product.id,
+})
+      });
+
+      if (!res.ok) {
+        throw new Error("Failed");
+      }
+
+      alert("Product added to cart successfully!");
+    } catch (error) {
+      console.error(error);
+      alert("Something went wrong");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
   <div className="mx-auto max-w-7xl px-8 py-10">
 
     <div className="grid gap-10 md:grid-cols-2">
@@ -59,9 +93,13 @@ export default function ProductDetails({
 </p>
 <div className="mt-8 flex gap-4">
 
-  <button className="flex-1 rounded-xl border-2 border-amber-500 py-3 font-semibold text-amber-500 transition hover:bg-amber-500 hover:text-white">
-    Add to Cart
-  </button>
+ <button
+  onClick={handleAddToCart}
+  disabled={loading}
+  className="flex-1 rounded-xl border-2 border-amber-500 py-3 font-semibold text-amber-500 transition hover:bg-amber-500 hover:text-white disabled:opacity-50"
+>
+  {loading ? "Adding..." : "Add to Cart"}
+</button>
 
   <Link href="/checkout" className="flex-1">
   <button className="w-full rounded-xl bg-amber-500 py-3 font-semibold text-white hover:bg-amber-600 transition">

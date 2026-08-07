@@ -25,6 +25,7 @@ import {
   TextField,
   Snackbar,
   Alert,
+  MenuItem,
 
 } from "@mui/material";
 
@@ -36,6 +37,9 @@ export default function ProductsPage() {
   const [products, setProducts] = useState<any[]>([]);
   const [page, setPage] = useState(1);
   const [totalPages, setTotalPages] = useState(1);
+
+  const [categories, setCategories] = useState<any[]>([]);
+const [selectedCategory, setSelectedCategory] = useState("");
 
   const [open, setOpen] = useState(false);
   const [selectedProduct, setSelectedProduct] = useState<any>(null);
@@ -63,13 +67,39 @@ const [snackbar, setSnackbar] = useState({
   severity: "success",
 });
 
-  async function getProducts() {
-    const res = await fetch(`/api/products?page=${page}`);
+async function getCategories() {
+  try {
+    const res = await fetch("/api/categories");
+
     const data = await res.json();
 
-    setProducts(data.products);
-    setTotalPages(data.totalPages);
+    if (res.ok) {
+      setCategories(data.categories);
+    }
+  } catch (error) {
+    console.error("CATEGORY ERROR:", error);
   }
+}
+
+  async function getProducts() {
+  try {
+    let url = `/api/products?page=${page}`;
+
+    if (selectedCategory) {
+      url += `&categoryId=${selectedCategory}`;
+    }
+
+    const res = await fetch(url);
+    const data = await res.json();
+
+    if (res.ok) {
+      setProducts(data.products);
+      setTotalPages(data.totalPages);
+    }
+  } catch (error) {
+    console.error("PRODUCT ERROR:", error);
+  }
+}
 
   function handleChange(e: React.ChangeEvent<HTMLInputElement>) {
   setFormData({
@@ -397,9 +427,13 @@ function handleEdit(product: any) {
   setEditOpen(true);
 }
 
-  useEffect(() => {
-    getProducts();
-  }, [page]);
+ useEffect(() => {
+  getProducts();
+}, [page, selectedCategory]);
+
+useEffect(() => {
+  getCategories();
+}, []);
 
 
 function handleFileChange(
@@ -469,6 +503,40 @@ function handleSnackbarClose() {
 </Button>
       </Box>
 
+      <Box
+  sx={{
+    display: "flex",
+    justifyContent: "flex-end",
+    mb: 3,
+  }}
+>
+  <TextField
+    select
+    label="Filter by Category"
+    value={selectedCategory}
+    onChange={(e) => {
+      setSelectedCategory(e.target.value);
+      setPage(1);
+    }}
+    sx={{
+      minWidth: 220,
+    }}
+  >
+    <MenuItem value="">
+      All Categories
+    </MenuItem>
+
+    {categories.map((category) => (
+      <MenuItem
+        key={category.id}
+        value={category.id}
+      >
+        {category.name}
+      </MenuItem>
+    ))}
+  </TextField>
+</Box>
+
       {/* Table */}
       <TableContainer component={Paper} elevation={4}>
         <Table>
@@ -491,10 +559,14 @@ function handleSnackbarClose() {
               </TableCell>
 
               <TableCell sx={{ color: "white", fontWeight: "bold" }}>
-                Price
-              </TableCell>
+  Price
+</TableCell>
 
-             <TableCell sx={{ color: "white", fontWeight: "bold" }}>
+<TableCell sx={{ color: "white", fontWeight: "bold" }}>
+  Category
+</TableCell>
+
+<TableCell sx={{ color: "white", fontWeight: "bold" }}>
   Created By
 </TableCell>
 
@@ -541,10 +613,16 @@ function handleSnackbarClose() {
                 <TableCell>{product.description}</TableCell>
 
                 <TableCell>
-                  ₹ {product.price}
-                </TableCell>
+  ₹ {product.price}
+</TableCell>
 
-               <TableCell>{product.user.name}</TableCell>
+<TableCell>
+  {product.category?.name || "No Category"}
+</TableCell>
+
+<TableCell>
+  {product.user.name}
+</TableCell>
 
 <TableCell align="center">
   <Box
@@ -658,6 +736,11 @@ function handleSnackbarClose() {
 
 <Typography sx={{ mt: 1 }}>
   <strong>Price:</strong> ₹ {selectedProduct.price}
+</Typography>
+
+<Typography sx={{ mt: 1 }}>
+  <strong>Category:</strong>{" "}
+  {selectedProduct.category?.name || "No Category"}
 </Typography>
 
 <Typography sx={{ mt: 1 }}>

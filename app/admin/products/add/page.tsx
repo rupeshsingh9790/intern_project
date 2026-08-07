@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 
@@ -12,6 +12,7 @@ import {
   Button,
   Snackbar,
   Alert,
+  MenuItem,
 } from "@mui/material";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -21,20 +22,41 @@ export default function AddProductPage() {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  const [categories, setCategories] = useState<any[]>([]);
+
   const [loading, setLoading] = useState(false);
 
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    image: "",
-  });
+  name: "",
+  description: "",
+  price: "",
+  image: "",
+  categoryId: "",
+});
 
   const [snackbar, setSnackbar] = useState({
     open: false,
     message: "",
     severity: "success",
   });
+
+  useEffect(() => {
+  async function loadCategories() {
+    try {
+      const res = await fetch("/api/categories");
+
+      const data = await res.json();
+
+      if (res.ok) {
+        setCategories(data.categories);
+      }
+    } catch (error) {
+      console.error("CATEGORY ERROR:", error);
+    }
+  }
+
+  loadCategories();
+}, []);
 
   function handleFileChange(
     e: React.ChangeEvent<HTMLInputElement>
@@ -85,15 +107,29 @@ return;
     return;
   }
 
+  
+
   // Price Validation
-  if (Number(formData.price) <= 0) {
-    setSnackbar({
-      open: true,
-      message: "Price must be greater than 0.",
-      severity: "warning",
-    });
-    return;
-  }
+  // Price Validation
+if (Number(formData.price) <= 0) {
+  setSnackbar({
+    open: true,
+    message: "Price must be greater than 0.",
+    severity: "warning",
+  });
+  return;
+}
+
+// Category Validation
+if (!formData.categoryId) {
+  setSnackbar({
+    open: true,
+    message: "Please select a category.",
+    severity: "warning",
+  });
+  return;
+}
+
 
   // Image Required
   if (!selectedFile) {
@@ -131,18 +167,23 @@ return;
       }
 
       // Save Product
-      const res = await fetch("/api/products", {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({
-          ...formData,
-          image: imageUrl,
-          price: Number(formData.price),
-          userId: 53, // Replace later with logged-in user
-        }),
-      });
+     const productData = {
+  name: formData.name,
+  description: formData.description,
+  price: Number(formData.price),
+  image: imageUrl,
+  categoryId: Number(formData.categoryId),
+};
+
+console.log("PRODUCT DATA:", productData);
+
+const res = await fetch("/api/products", {
+  method: "POST",
+  headers: {
+    "Content-Type": "application/json",
+  },
+  body: JSON.stringify(productData),
+});
 
       const data = await res.json();
 
@@ -232,6 +273,31 @@ return;
             }
             fullWidth
           />
+          <TextField
+  select
+  label="Category"
+  value={formData.categoryId}
+  onChange={(e) =>
+    setFormData({
+      ...formData,
+      categoryId: e.target.value,
+    })
+  }
+  fullWidth
+>
+  <MenuItem value="">
+    Select Category
+  </MenuItem>
+
+  {categories.map((category) => (
+    <MenuItem
+      key={category.id}
+      value={category.id}
+    >
+      {category.name}
+    </MenuItem>
+  ))}
+</TextField>
 
           <img
             src={

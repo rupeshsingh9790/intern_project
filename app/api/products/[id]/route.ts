@@ -11,8 +11,9 @@ export async function GET(
             id: Number(id),
         },
         include: {
-            user: true,
-        },
+  user: true,
+  category: true,
+},
     });
     if (!product) {
         return NextResponse.json(
@@ -32,7 +33,13 @@ export async function GET(
 
   console.log("PUT BODY:", body);
 
-  const { name, description, price, image } = body;
+  const {
+  name,
+  description,
+  price,
+  image,
+  categoryId,
+} = body;
 
   console.log({
     name,
@@ -46,11 +53,12 @@ export async function GET(
       id: Number(id),
     },
     data: {
-      name,
-      description,
-      price,
-      image,
-    },
+  name,
+  description,
+  price,
+  image,
+  categoryId: Number(categoryId),
+},
   });
 
   return NextResponse.json({

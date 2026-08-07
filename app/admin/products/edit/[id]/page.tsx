@@ -11,6 +11,7 @@ import {
   Button,
   Snackbar,
   Alert,
+  MenuItem,
 } from "@mui/material";
 
 import ArrowBackIcon from "@mui/icons-material/ArrowBack";
@@ -21,12 +22,15 @@ export default function EditProductPage() {
 
   const [selectedFile, setSelectedFile] = useState<File | null>(null);
 
+  const [categories, setCategories] = useState<any[]>([]);
+
   const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    price: "",
-    image: "",
-  });
+  name: "",
+  description: "",
+  price: "",
+  image: "",
+  categoryId: "",
+});
 
   const [snackbar, setSnackbar] = useState({
   open: false,
@@ -41,16 +45,30 @@ function handleSnackbarClose() {
   });
 }
 
+async function getCategories() {
+  try {
+    const res = await fetch("/api/categories");
+    const data = await res.json();
+
+    if (res.ok) {
+      setCategories(data.categories);
+    }
+  } catch (error) {
+    console.error("CATEGORY ERROR:", error);
+  }
+}
+
   async function getProduct() {
     const res = await fetch(`/api/products/${id}`);
     const data = await res.json();
 
-    setFormData({
-      name: data.name,
-      description: data.description,
-      price: data.price.toString(),
-      image: data.image,
-    });
+   setFormData({
+  name: data.name,
+  description: data.description,
+  price: data.price.toString(),
+  image: data.image,
+  categoryId: data.categoryId?.toString() || "",
+});
   }
 
   function handleFileChange(
@@ -110,6 +128,15 @@ if (Number(formData.price) <= 0) {
   severity: "warning",
 });
 return;
+}
+
+if (!formData.categoryId) {
+  setSnackbar({
+    open: true,
+    message: "Please select a category",
+    severity: "warning",
+  });
+  return;
 }
 
 // Image Required (only if no old image and no new image)
@@ -175,11 +202,12 @@ return;
   }
 }
 
-  useEffect(() => {
-    if (id) {
-      getProduct();
-    }
-  }, [id]);
+ useEffect(() => {
+  if (id) {
+    getProduct();
+    getCategories();
+  }
+}, [id]);
 
  return (
   <Box sx={{ p: 4 }}>
@@ -251,6 +279,32 @@ return;
     })
   }
 />
+
+<TextField
+  select
+  label="Category"
+  value={formData.categoryId}
+  fullWidth
+  onChange={(e) =>
+    setFormData({
+      ...formData,
+      categoryId: e.target.value,
+    })
+  }
+>
+  <MenuItem value="">
+    Select Category
+  </MenuItem>
+
+  {categories.map((category) => (
+    <MenuItem
+      key={category.id}
+      value={category.id}
+    >
+      {category.name}
+    </MenuItem>
+  ))}
+</TextField>
 
 <img
   src={
